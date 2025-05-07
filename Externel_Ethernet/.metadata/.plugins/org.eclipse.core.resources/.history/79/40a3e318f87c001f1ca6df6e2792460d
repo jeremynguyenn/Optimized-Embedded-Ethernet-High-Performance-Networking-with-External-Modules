@@ -1,0 +1,4 @@
+../Src/main.c:23:6:check_cable_connection	16	static
+../Src/main.c:44:6:display_phy_config	16	static
+../Src/main.c:65:6:handle_error	16	static
+../Src/main.c:76:5:main	32	static

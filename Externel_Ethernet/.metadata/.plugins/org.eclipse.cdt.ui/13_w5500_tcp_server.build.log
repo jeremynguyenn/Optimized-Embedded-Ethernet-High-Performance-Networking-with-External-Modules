@@ -1,0 +1,10 @@
+22:28:44 **** Incremental Build of configuration Debug for project 13_w5500_tcp_server ****
+make -j8 all 
+arm-none-eabi-size  13_w5500_tcp_server.elf 
+   text	   data	    bss	    dec	    hex	filename
+  26220	    200	   3336	  29756	   743c	13_w5500_tcp_server.elf
+Finished building: default.size.stdout
+ 
+
+22:28:45 Build Finished. 0 errors, 0 warnings. (took 482ms)
+

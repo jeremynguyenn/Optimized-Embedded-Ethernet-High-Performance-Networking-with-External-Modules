@@ -1,0 +1,10 @@
+18:33:55 **** Incremental Build of configuration Debug for project 11_w5500_tcp_client ****
+make -j8 all 
+arm-none-eabi-size  11_w5500_tcp_client.elf 
+   text	   data	    bss	    dec	    hex	filename
+  25044	    208	   3336	  28588	   6fac	11_w5500_tcp_client.elf
+Finished building: default.size.stdout
+ 
+
+18:33:55 Build Finished. 0 errors, 0 warnings. (took 576ms)
+

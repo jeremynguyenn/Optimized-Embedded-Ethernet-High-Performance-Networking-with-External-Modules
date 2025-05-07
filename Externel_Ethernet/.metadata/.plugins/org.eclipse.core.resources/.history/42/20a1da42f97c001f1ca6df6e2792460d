@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include "stm32f4xx.h"
+#include "fpu.h"
+#include "uart.h"
+#include "timebase.h"
+#include "bsp.h"
+#include "adc.h"
+#include "w5500_driver.h"
+#include "webpages.h"
+
+#define RECEIVE_BUFF_SIZE	64
+#define SOCKET_TO_USE		1
+
+uint8_t dest_server_ip[] ={192,168,0,15};
+
+uint16_t dest_server_port = 30;
+
+uint8_t receive_buff[RECEIVE_BUFF_SIZE];
+
+wiz_PhyConf current_phy_conf;
+
+
+void check_cable_connection(void)
+{
+	uint8_t cable_status;
+
+	do{
+
+		printf("\r\nGetting cable status...\r\n");
+		ctlwizchip(CW_GET_PHYLINK,(void *)&cable_status);
+
+		if(cable_status ==  PHY_LINK_OFF)
+		{
+			printf("No cable detected ...\r\n");
+			delay(1000);
+		}
+
+	}while(cable_status ==  PHY_LINK_OFF);
+
+	printf("Cable connected...\r\n");
+
+}
+
+void display_phy_config(void)
+{
+	wiz_PhyConf phy_conf;
+	ctlwizchip(CW_GET_PHYCONF,(void*)&phy_conf);
+
+	if(phy_conf.by == PHY_CONFBY_HW)
+	{
+		printf("\n\rPHY is currently configured by hardware.");
+	}
+	else{
+		printf("\n\rPHY is currently configured by software.");
+
+	}
+	printf("\r\nSTATUS: Autonegotiation %s",(phy_conf.mode == PHY_MODE_AUTONEGO) ? "Enabled" : "Disabled");
+	printf("\r\nSTATUS: Duplex Mode: %s",(phy_conf.duplex == PHY_DUPLEX_FULL) ? "Full Duplex" : "Half Duplex");
+	printf("\r\nSTATUS: Speed: %dMbps",(phy_conf.speed == PHY_SPEED_10) ? 10 : 100);
+  printf("\r\n...");
+
+}
+
+
+void handle_error(const char * message)
+{
+	printf("ERROR: %s\r\n",message);
+
+	//Optionally reset the system
+
+	while(1){
+		//You could blink an LED here
+	}
+}
+
+int main()
+{
+	/*Enable FPU*/
+	fpu_enable();
+
+	/*Initialize timebase*/
+	timebase_init();
+
+	/*Initialize debug UART*/
+	debug_uart_init();
+
+
+
+	/*Initialize LED*/
+	led_init();
+
+	/*Initialize Push button*/
+	button_init();
+
+	/*Initialize ADC*/
+	pa1_adc_init();
+
+	/*Start conversion*/
+	start_conversion();
+
+    wizchip_cs_pin_init();
+    w5500_spi_init();
+    w5500_init();
+
+
+    current_phy_conf.by =  PHY_CONFBY_SW;
+    current_phy_conf.duplex =  PHY_DUPLEX_FULL;
+    current_phy_conf.mode   =  PHY_MODE_AUTONEGO;
+    current_phy_conf.speed =  PHY_SPEED_10;
+
+    ctlwizchip(CW_SET_PHYCONF,(void*)&current_phy_conf);
+
+    check_cable_connection();
+
+    display_phy_config();
+
+     printf("\r\n**********************TCP Client***********************\r\n");
+
+   if(socket(SOCKET_TO_USE, Sn_MR_TCP,0,0) == SOCKET_TO_USE)
+   {
+	   printf("\r\nSocket created successfully.");
+   }
+   else
+   {
+	   printf("\r\nFailed to create socket....");
+   }
+
+   /* Connect to the specified server */
+   printf("\r\nConnecting to server: %d.%d.%d.%d @ Port: %d",
+          dest_server_ip[0], dest_server_ip[1], dest_server_ip[2], dest_server_ip[3], dest_server_port);
+
+
+   if(connect(SOCKET_TO_USE, dest_server_ip,dest_server_port) == SOCK_OK)
+   {
+	   printf("\r\nSuccessfully connected to server");
+   }else
+   {
+	   handle_error("\r\nFailed to connect to server...");
+   }
+	while(1)
+	{
+        /*Send data to the server*/
+		int32_t bytes_sent =  send(SOCKET_TO_USE,"EmbeddedExpertIO\n\r",18);
+
+		if(bytes_sent <= SOCK_ERROR)
+		{
+			   handle_error("\r\nFailed to send data to server...");
+
+		}
+		else
+		{
+			printf("data sent successfully(%d bytes).\r\n",bytes_sent);
+		}
+
+        /*Receive data from the server*/
+		int32_t received_bytes =  recv(SOCKET_TO_USE,receive_buff,RECEIVE_BUFF_SIZE);
+
+		if(received_bytes > 0)
+		{
+			receive_buff[RECEIVE_BUFF_SIZE] = '\0';
+			printf("Data received from server: %s\r\n",receive_buff);
+		}
+		else if( received_bytes == 0)
+		{
+			//Do something...
+		}
+
+
+		else if( received_bytes < 0)
+		{
+			   handle_error("\r\nError occurred while receiving data from server...");
+		}
+
+		delay(1000);
+	}
+}
+

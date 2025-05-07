@@ -1,0 +1,5 @@
+../Src/main.c:23:6:check_cable_connection	3
+../Src/main.c:44:6:display_phy_config	5
+../Src/main.c:65:6:handle_error	1
+../Src/main.c:77:6:send_sensor_data	2
+../Src/main.c:93:5:main	7

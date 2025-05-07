@@ -1,0 +1,46 @@
+22:28:37 **** Incremental Build of configuration Debug for project 13_w5500_tcp_server ****
+make -j8 all 
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/chip_headers/CMSIS/Include" -I"C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/chip_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/Inc" -I"C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/Wiznet_W5500" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Src/main.o"
+../Src/main.c: In function 'send_sensor_data':
+../Src/main.c:78:30: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+   78 |         sprintf(sensor_str,"%u\r\n",sensor_value);
+      |                             ~^      ~~~~~~~~~~~~
+      |                              |      |
+      |                              |      uint32_t {aka long unsigned int}
+      |                              unsigned int
+      |                             %lu
+../Src/main.c: In function 'handle_client_data':
+../Src/main.c:162:27: warning: format '%d' expects argument of type 'int', but argument 2 has type 'int32_t' {aka 'long int'} [-Wformat=]
+  162 |         printf("Received %d bytes from client: %s\r\n",received_len,receive_buff);
+      |                          ~^                            ~~~~~~~~~~~~
+      |                           |                            |
+      |                           int                          int32_t {aka long int}
+      |                          %ld
+../Src/main.c: In function 'echo_back_to_client':
+../Src/main.c:184:28: warning: passing argument 2 of 'send' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  184 |         send(SOCKET_TO_USE,data,length);
+      |                            ^~~~
+In file included from C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/Inc/w5500_driver.h:9,
+                 from ../Src/main.c:8:
+C:/Users/Ninsaw/Documents/Externel_Ethernet/13_w5500_tcp_server/Wiznet_W5500/socket.h:250:36: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'const uint8_t *' {aka 'const unsigned char *'}
+  250 | int32_t send(uint8_t sn, uint8_t * buf, uint16_t len);
+      |                          ~~~~~~~~~~^~~
+arm-none-eabi-gcc -o "13_w5500_tcp_server.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Ninsaw\Documents\Externel_Ethernet\13_w5500_tcp_server\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="13_w5500_tcp_server.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.15.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.win32_1.0.100.202403111256/tools/bin/../lib/gcc/arm-none-eabi/12.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: 13_w5500_tcp_server.elf has a LOAD segment with RWX permissions
+Finished building target: 13_w5500_tcp_server.elf
+ 
+arm-none-eabi-size  13_w5500_tcp_server.elf 
+arm-none-eabi-objdump -h -S 13_w5500_tcp_server.elf  > "13_w5500_tcp_server.list"
+   text	   data	    bss	    dec	    hex	filename
+  26220	    200	   3336	  29756	   743c	13_w5500_tcp_server.elf
+Finished building: default.size.stdout
+ 
+Finished building: 13_w5500_tcp_server.list
+ 
+22:28:44 **** Incremental Build of configuration Debug for project 13_w5500_tcp_server ****
+make -j8 all 
+arm-none-eabi-size  13_w5500_tcp_server.elf 
+   text	   data	    bss	    dec	    hex	filename
+  26220	    200	   3336	  29756	   743c	13_w5500_tcp_server.elf
+Finished building: default.size.stdout
+ 
